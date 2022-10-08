@@ -89,6 +89,7 @@ makeStringCopyNullTerminated(String string)
 String inline
 makeSubstring(String parent, size_t start, int length = -1)
 {
+	if(!parent) return nullptr;
 	if(length == 0 || start < 0 || start >= parent->count) return nullptr;
 	if(length == -1)
 	{
@@ -144,24 +145,24 @@ areEqual(String a, String b)
 		(ident) = (String)alloca(sizeof(String_T) + count * sizeof(char));\
 		if((ident))\
 		{\
-			if(c_string[count - 1] != 0) (ident->count += 1;         \
+			if(c_string[count - 1] != 0) (ident)->count += 1;         \
 			(ident)->count = count;\
-			if(c_string[count - 1] != 0) (ident->data[count] = 0;    \
+			if(c_string[count - 1] != 0) (ident)->data[count] = 0;    \
 			memcpy(&(ident)->data, (c_string), count * sizeof(char));\
 		}\
+	}\
 	}while(0)
 #define MACRO_LocalMakeStringCopyNullTerminated(cpy, other)\
 	do{(cpy) = nullptr;\
-	if(other->data[other->count - 1] == 0) return makeStringCopy(other);\
 	cpy = (String)alloca(sizeof(String_T) + (other->count + 1) * sizeof(char));\
 	if(cpy)\
 	{\
 		cpy->count = other->count + 1;\
 		memcpy(cpy->data, other->data, other->count * sizeof(char));\
-		cpy->data[temp->count - 1] = 0;\
+		cpy->data[cpy->count - 1] = 0;\
 	}\
 	}while(0)
-
+//#define MACRO_Literal(lit) {sizeof(lit) - 1, (lit)}
 
 int
 countCharacterAppearances(String str, char c)
@@ -196,4 +197,16 @@ String append(String first, String second)
 	return result;
 
 }
+
+size_t indexOfFirstDifference(String a, String b)
+{
+	if(!a || !b) return 0;
+	int idx = 0;
+	while(a->data[idx] == b->data[idx])
+	{
+		idx += 1;
+	}
+	return idx;
+}
+
 #endif //STRING
